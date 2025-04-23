@@ -89,16 +89,15 @@ end
 
 function soil_heat_capacity(
     θ_w, # soil volumetric water content
-    ρ_b::Unitful.Quantity=(1200 - 250 * exp(0))u"kg/m^3",  # soil bulk density
-    c_o::Unitful.Quantity=1920u"J/kg/K",  # specific heat of soil organic matter
-    c_m::Unitful.Quantity=900u"J/kg/K",  # specific heat of soil mineral
-    C_w::Unitful.Quantity=4.186e6u"J/m^3/K",  # volumetric heat capacity of water
-    f_o_m::Float64=0.0745  # soil organic matter fraction by mass
+    θ_s = 0.7
+    ρ_s::Unitful.Quantity=2700u"kg/m^3",
+    c_s::Unitful.Quantity=790u"J/kg/K",
+    p_w::Unitful.Quantity=1000u"kg/m^3",
+    C_w::Unitful.Quantity=4180u"J/kg/K", 
 )::Unitful.Quantity
 
-    soil_volumetric_heat_capacity = ρ_b * (c_o * f_o_m + c_m * (1 - f_o_m))
-    C_s = soil_volumetric_heat_capacity + C_w * θ_w
-
+    C_s = ρ_s * c_s * θ_s + C_w * θ_w *p_w
+ 
     return C_s
 end
 
