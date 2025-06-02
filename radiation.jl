@@ -61,9 +61,8 @@ function saturation_vapor_pressure(T::Unitful.Temperature)
 end
 
 function atmospheric_emissivity(
-    atmospheric_temperature::Unitful.Temperature,
-    soil_temperature::Unitful.Temperature)
-    p_w = saturation_vapor_pressure(soil_temperature)
+    atmospheric_temperature::Unitful.Temperature)
+    p_w = saturation_vapor_pressure(atmospheric_temperature)
     p_w_hPa = uconvert(u"hPa", p_w)
     ϵ_a = 1.24 * (ustrip(p_w_hPa) / ustrip(atmospheric_temperature))^(1 / 7)
     return ϵ_a
@@ -78,7 +77,7 @@ function quantity_of_heat_by_radiation(
     α_s=0.075,
     ϵ_s=0.97,
     σ=5.67e-8 * u"W/(m^2 * K^4)")
-    ϵ_a = atmospheric_emissivity(atmospheric_temperature, soil_temperature)
+    ϵ_a = atmospheric_emissivity(atmospheric_temperature)
     atmospheric_temperature_kelvin = uconvert(u"K", atmospheric_temperature)
     soil_temperature_kelvin = uconvert(u"K", soil_temperature)
     quantity_of_heat = solar_radiation * (1 - α_s) + σ * ϵ_s * (ϵ_a * (atmospheric_temperature_kelvin^4) - soil_temperature_kelvin^4)
@@ -89,12 +88,11 @@ end
 
 function soil_heat_capacity(
     θ_w, # soil volumetric water content
-    θ_s = 0.7
+    θ_s = 0.7,
     ρ_s::Unitful.Quantity=2700u"kg/m^3",
     c_s::Unitful.Quantity=790u"J/kg/K",
     p_w::Unitful.Quantity=1000u"kg/m^3",
-    C_w::Unitful.Quantity=4180u"J/kg/K", 
-)::Unitful.Quantity
+    C_w::Unitful.Quantity=4180u"J/kg/K")::Unitful.Quantity
 
     C_s = ρ_s * c_s * θ_s + C_w * θ_w *p_w
  
